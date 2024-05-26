@@ -1,0 +1,35 @@
+{
+  "name": "dndbeyond-to-discord",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node .",
+    "login": "pnpm run start --login",
+    "lint": "eslint . --ext ts --max-warnings 0"
+  },
+  "author": "Joel Dohm-Karatjas",
+  "license": "MIT",
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.52",
+    "discord.js": "^14.15.2",
+    "dotenv": "^16.4.5",
+    "puppeteer": "^22.10.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^2.1.0",
+    "@types/node": "^20.12.12",
+    "@typescript-eslint/eslint-plugin": "^7.10.0",
+    "@typescript-eslint/parser": "^7.10.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-simple-import-sort": "^12.1.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  }
+}
