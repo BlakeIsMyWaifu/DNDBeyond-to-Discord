@@ -63,7 +63,7 @@ export default async function getImageBuffer(data) {
 	addText({ text: data.rolls[0].result.text.replaceAll('+-', '-'), colour: 'black', x: 46, y: 65, maxWidth: 172 })
 
 	const { diceNotation } = data.rolls[0]
-	const constant = diceNotation.constant > 0 ? `+${diceNotation.constant}` : diceNotation.constant
+	const constant = diceNotation.constant === 0 ? '' : (diceNotation.constant > 0 ? `+${diceNotation.constant}` : diceNotation.constant)
 	addText({
 		text: `${diceNotation.set[0].count}${diceNotation.set[0].dieType}${constant}`,
 		x: 12,
