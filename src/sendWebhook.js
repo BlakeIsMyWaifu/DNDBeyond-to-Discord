@@ -17,7 +17,8 @@ export default async function sendWebhook({ data }) {
 
 	await webhookClient.send({
 		username: data.context.name,
-		files: [attachment]
+		files: [attachment],
+		avatarURL: data.context.avatarUrl ?? 'https://www.dndbeyond.com/content/1-0-2729-0/skins/waterdeep/images/characters/default-avatar.png'
 	})
 }
 

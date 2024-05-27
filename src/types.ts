@@ -32,6 +32,7 @@ type RollData = {
 		entityId: string
 		entityType: string
 		name: string
+		avatarUrl?: string
 		messageScope: string
 		messageTarget: string
 	}
