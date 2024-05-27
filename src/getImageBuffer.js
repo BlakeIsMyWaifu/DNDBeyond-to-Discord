@@ -1,11 +1,10 @@
-import { createCanvas } from '@napi-rs/canvas'
-import { GlobalFonts, Path2D } from '@napi-rs/canvas'
+import { createCanvas, GlobalFonts, Path2D } from '@napi-rs/canvas'
 
 GlobalFonts.registerFromPath('./assets/RobotoCondensed-Regular.ttf', 'Roboto Condensed')
 
 /** @type {import('./types').GetImageBuffer} */
 export default async function getImageBuffer(data) {
-	const [height, width] = [120, 250]
+	const [height, width] = [108, 300]
 
 	const canvas = createCanvas(width, height)
 	const context = canvas.getContext('2d')
@@ -22,10 +21,10 @@ export default async function getImageBuffer(data) {
 	}
 
 	/** @type {import('./types').AddText} */
-	function addText({ text, colour, x, y, fontSize = 32 }) {
+	function addText({ text, colour, x, y, fontSize = 32, maxWidth }) {
 		setColour(colour)
 		context.font = `${fontSize}px Roboto Condensed`
-		context.fillText(text, x, y)
+		context.fillText(text, x, y, maxWidth)
 	}
 
 	/** @type {import('./types').AddRect} */
@@ -44,7 +43,6 @@ export default async function getImageBuffer(data) {
 	}
 
 	addRect({ colour: 'lightGray', x: 0, y: 0, width, height })
-
 	const borderSize = 8
 	addRect({
 		colour: 'white',
@@ -54,29 +52,31 @@ export default async function getImageBuffer(data) {
 		height: height - borderSize * 2
 	})
 
-	addText({ text: `${data.action}: ${data.rolls[0].rollType}`, x: 12, y: 36 })
+	addText({ text: `${data.action}: ${data.rolls[0].rollType}`.toUpperCase(), x: 12, y: 34, maxWidth: 212 })
 
 	addSVG({
 		path: 'M16 1l14 7.45v15l-1 .596L16 31 2 23.55V8.45L16 1zm5 19.868H10l6 7.45 5-7.45zm-13.3.496L5 22.954l7.1 3.874-4.4-5.464zm16.6-.1l-4.4 5.464 7.1-3.874-2.7-1.59zM4 13.716v7.55l2.7-1.59-2.7-5.96zm24 0l-2.7 5.96.2.1 2.5 1.49v-7.55zM16 9.841l-6 9.04h12l-6-9.04zm-2-.596l-9.6.795 3.7 7.947L14 9.245zm4 0l5.8 8.742 3.7-8.047-9.5-.695zm-1-5.464V7.16l7.4.596L17 3.781zm-2 0L7.6 7.755l7.4-.596V3.78z',
 		x: 12,
-		y: 42
+		y: 37
 	})
 
-	addText({ text: data.rolls[0].result.text, colour: 'black', x: 42, y: 64 })
+	addText({ text: data.rolls[0].result.text.replaceAll('+-', '-'), colour: 'black', x: 46, y: 65, maxWidth: 172 })
 
 	const { diceNotation } = data.rolls[0]
+	const constant = diceNotation.constant > 0 ? `+${diceNotation.constant}` : diceNotation.constant
 	addText({
-		text: `${diceNotation.set[0].count}${diceNotation.set[0].dieType}${diceNotation.constant}`,
+		text: `${diceNotation.set[0].count}${diceNotation.set[0].dieType}${constant}`,
 		x: 12,
-		y: 96
+		y: 96,
+		maxWidth: 212
 	})
 
-	addRect({ x: 180, y: 12, width: 2, height: 32 })
-	addRect({ x: 170, y: 48, width: 20, height: 4 })
-	addRect({ x: 170, y: 56, width: 20, height: 4 })
-	addRect({ x: 180, y: 64, width: 2, height: 32 })
+	addRect({ x: width - 70, y: 12, width: 2, height: 32 })
+	addRect({ x: width - 80, y: 48, width: 20, height: 4 })
+	addRect({ x: width - 80, y: 56, width: 20, height: 4 })
+	addRect({ x: width - 70, y: 64, width: 2, height: 32 })
 
-	addText({ text: data.rolls[0].result.total.toString(), colour: 'black', x: 200, y: 64 })
+	addText({ text: data.rolls[0].result.total.toString(), colour: 'black', x: width - 50, y: 65 })
 
 	return await canvas.encode('png')
 }

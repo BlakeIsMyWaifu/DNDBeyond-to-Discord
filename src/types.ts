@@ -1,17 +1,31 @@
-export type WebhookData = {
+interface BaseWebhookData {
 	id: string
 	dateTime: string
 	gameId: string
 	userId: string
-	source: 'web'
-	data: RollData
+	source: 'web' | 'simplified-character-deriver'
+	data: object
 	entityId: string
 	entityType: 'character'
-	eventType: 'dice/roll/pending' | 'dice/roll/fulfilled'
+	eventType: string
 	persist: boolean
 	messageScope: 'gameId'
 	messageTarge: string
 }
+
+interface RollWebhookData extends BaseWebhookData {
+	data: RollData
+	eventType: 'dice/roll/pending' | 'dice/roll/fulfilled'
+}
+
+interface CharacterWebhookData extends BaseWebhookData {
+	data: {
+		characterId: number
+	}
+	eventType: 'character-sheet/character-update/fulfilled'
+}
+
+export type WebhookData = RollWebhookData | CharacterWebhookData
 
 type RollData = {
 	context: {
@@ -23,34 +37,32 @@ type RollData = {
 	}
 	rollId: string
 	action: string
-	rolls: Roll[]
+	rolls: {
+		diceNotation: {
+			set: {
+				count: number
+				dieType: string
+				dice: {
+					dieType: string
+					dieValue: number
+				}[]
+				operation: number
+			}[]
+			constant: number
+		}
+		rollType: string
+		rollKind: string
+		result: {
+			constant: number
+			values: number[]
+			total: number
+			text: string
+		}
+	}[]
 	setId: string
 }
 
-type Roll = {
-	diceNotation: {
-		set: {
-			count: number
-			dieType: string
-			dice: {
-				dieType: string
-				dieValue: number
-			}[]
-			operation: number
-		}[]
-		constant: number
-	}
-	rollType: string
-	rollKind: string
-	result: {
-		constant: number
-		values: number[]
-		total: number
-		text: string
-	}
-}
-
-export type SendWebhook = (data: WebhookData) => Promise<void>
+export type SendWebhook = (data: RollWebhookData) => Promise<void>
 
 export type GetImageBuffer = (data: RollData) => Promise<Buffer>
 
@@ -66,6 +78,7 @@ export type AddText = (options: AddTextOptions) => void
 interface AddTextOptions extends BaseOption {
 	text: string
 	fontSize?: number
+	maxWidth?: number
 }
 
 export type AddRect = (options: AddRectOptions) => void
